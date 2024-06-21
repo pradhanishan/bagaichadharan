@@ -1,8 +1,8 @@
-"use server";
+'use server';
 
-import { z } from "zod";
-import { RegisterSchema } from "@/schemas";
+import { RegisterSchema } from '@/schemas';
+import { z } from 'zod';
 
-export async function Register(formData: z.infer<typeof RegisterSchema>) {
+export async function register(formData: z.infer<typeof RegisterSchema>) {
   console.log(formData);
 }
