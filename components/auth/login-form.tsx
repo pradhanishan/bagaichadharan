@@ -6,11 +6,13 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '@/components/ui/input';
 import { LoginSchema } from '@/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import { useState, useTransition } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 function LoginForm() {
+  const [formResponse, setFormResponse] = useState<{ error: string } | undefined>(undefined);
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof LoginSchema>>({
@@ -23,7 +25,9 @@ function LoginForm() {
 
   const onSubmit: SubmitHandler<z.infer<typeof LoginSchema>> = (formData) => {
     startTransition(() => {
-      login(formData);
+      login(formData).then((response) => {
+        setFormResponse(response);
+      });
     });
   };
 
@@ -68,6 +72,12 @@ function LoginForm() {
             </FormItem>
           )}
         />
+        {formResponse && (
+          <FormMessage className="bg-rose-200/30 p-2 text-red-600 flex justify-start items-center gap-4">
+            <ExclamationTriangleIcon />
+            <span>{formResponse.error}</span>
+          </FormMessage>
+        )}
         <Button type="submit" className="w-full" disabled={isPending}>
           login
         </Button>

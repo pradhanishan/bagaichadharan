@@ -6,11 +6,17 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '@/components/ui/input';
 import { RegisterSchema } from '@/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { CheckCircledIcon, ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import { useState, useTransition } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 function RegisterForm() {
+  const [formResponse, setFormResponse] = useState<{ error: string | undefined; success: string | undefined }>({
+    error: undefined,
+    success: undefined,
+  });
+
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof RegisterSchema>>({
@@ -23,7 +29,9 @@ function RegisterForm() {
 
   const onSubmit: SubmitHandler<z.infer<typeof RegisterSchema>> = (formData) => {
     startTransition(() => {
-      register(formData);
+      register(formData).then((response) => {
+        setFormResponse({ error: response.error, success: response.success });
+      });
     });
   };
 
@@ -83,6 +91,18 @@ function RegisterForm() {
             </FormItem>
           )}
         />
+        {formResponse.error && (
+          <FormMessage className="bg-rose-200/30 p-2 text-red-600 flex justify-start items-center gap-4">
+            <ExclamationTriangleIcon />
+            <span>{formResponse.error}</span>
+          </FormMessage>
+        )}
+        {formResponse.success && (
+          <FormMessage className="bg-emerald-300/30 p-2 text-emerald-600 flex justify-start items-center gap-4">
+            <CheckCircledIcon />
+            <span>{formResponse.success}</span>
+          </FormMessage>
+        )}
         <Button type="submit" className="w-full" disabled={isPending}>
           register
         </Button>
