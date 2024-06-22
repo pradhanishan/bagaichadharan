@@ -7,6 +7,7 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// AUTH MODELS
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -49,4 +50,36 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+// PRODUCT MODELS
+model Product {
+  id                Int             @id @default(autoincrement())
+  name              String          @unique
+  description       String?
+  price             Float
+  productCategoryId Int
+  productCategory   ProductCategory @relation(fields: [productCategoryId], references: [id])
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  isActive          Boolean         @default(true)
+}
+
+model ProductCategory {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  description String?
+  products    Product[] // Relation field for the one-to-many relationship
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  isActive    Boolean   @default(true)
+}
+
+model RestaurantTable {
+  id        Int      @id @default(autoincrement())
+  number    Int      @unique
+  seats     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isActive  Boolean  @default(true)
 }
