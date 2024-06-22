@@ -6,12 +6,12 @@ export default function DashboardLayout({
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Left Sidebar - Navigation */}
-      <div className="w-1/4 bg-gray-200 overflow-y-auto">{/* Your navigation content goes here */}</div>
+      <div className="w-1/4 border-r border-gray-200 overflow-y-auto">{/* Your navigation content goes here */}</div>
 
       {/* Right Content Area */}
-      <div className="w-3/4 bg-white overflow-y-auto">
+      <div className="w-3/4 bg-slate-200/35 overflow-y-auto">
         {/* Main content area */}
-        <div className="p-4">{children}</div>
+        {children}
       </div>
     </div>
   );
