@@ -47,17 +47,20 @@ async function main() {
   const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
   // Create the admin user
-  const adminUser = await prisma.user.create({
-    data: {
+  const adminUser = await prisma.user.upsert({
+    where: { email: adminEmail }, // Unique identifier to check if user already exists
+    update: {
+      name: adminName,
+      password: hashedPassword,
+      role: 'ADMIN', // Assuming 'ADMIN' is the enum value for admin role
+    },
+    create: {
       name: adminName,
       email: adminEmail,
       password: hashedPassword,
       role: 'ADMIN', // Assuming 'ADMIN' is the enum value for admin role
     },
   });
-
-  console.log('Admin user created:');
-  console.log(adminUser);
 
   const productCategories = [
     { name: 'Cafe', description: 'Freshly brewed coffee and light snacks' },
@@ -299,6 +302,86 @@ async function main() {
   await Promise.all(productUpserts);
 
   console.log('Database has been seeded.');
+
+  const areas = [
+    { name: 'Roof lobby - 1', areaType: 'Roof' },
+    { name: 'Roof lobby - 2', areaType: 'Roof' },
+    { name: 'Roof lobby - 3', areaType: 'Roof' },
+    { name: 'Roof lobby - 4', areaType: 'Roof' },
+    { name: 'Roof lobby - 5', areaType: 'Roof' },
+    { name: 'Roof lobby - 6', areaType: 'Roof' },
+    { name: 'Roof lobby - 7', areaType: 'Roof' },
+    { name: 'Roof lobby - 8', areaType: 'Roof' },
+    { name: 'Roof lobby - 9', areaType: 'Roof' },
+    { name: 'Roof outside - 1', areaType: 'Roof' },
+    { name: 'Roof outside - 2', areaType: 'Roof' },
+    { name: 'Roof outside - 3', areaType: 'Roof' },
+    { name: 'Roof outside - 4', areaType: 'Roof' },
+    { name: 'Roof outside - 5', areaType: 'Roof' },
+    { name: 'Roof outside - 6', areaType: 'Roof' },
+    { name: 'Roof outside - 7', areaType: 'Roof' },
+    { name: 'Roof outside - 8', areaType: 'Roof' },
+    { name: 'Roof outside - 9', areaType: 'Roof' },
+    { name: 'Ground lobby - 1', areaType: 'Ground' },
+    { name: 'Ground lobby - 2', areaType: 'Ground' },
+    { name: 'Ground lobby - 3', areaType: 'Ground' },
+    { name: 'Ground lobby - 4', areaType: 'Ground' },
+    { name: 'Ground lobby - 5', areaType: 'Ground' },
+    { name: 'Ground lobby - 6', areaType: 'Ground' },
+    { name: 'Ground lobby - 7', areaType: 'Ground' },
+    { name: 'Cafe - 1', areaType: 'Cafe' },
+    { name: 'Cafe - 2', areaType: 'Cafe' },
+    { name: 'Cafe - 3', areaType: 'Cafe' },
+    { name: 'Cafe - 4', areaType: 'Cafe' },
+    { name: 'Cafe - 5', areaType: 'Cafe' },
+    { name: 'Ground open space - 1', areaType: 'Ground' },
+    { name: 'Ground open space - 2', areaType: 'Ground' },
+    { name: 'Ground open space - 3', areaType: 'Ground' },
+    { name: 'Ground open space - 4', areaType: 'Ground' },
+    { name: 'Ground open space - 5', areaType: 'Ground' },
+  ];
+
+  // Upsert dining areas
+  const areaUpserts = areas.map(async (area) => {
+    return await prisma.area.upsert({
+      where: { name: area.name },
+      update: { areaType: area.areaType, updatedAt: new Date() },
+      create: { name: area.name, areaType: area.areaType },
+    });
+  });
+
+  await Promise.all(areaUpserts);
+
+  const staffData = [
+    { name: 'Bir Bahadur Limbu', staffType: 'Chefs' },
+    { name: 'Balajit Rai', staffType: 'Chefs' },
+    { name: 'Anuj Niraula', staffType: 'Chefs' },
+    { name: 'Sudeep Tamang', staffType: 'Chefs' },
+    { name: 'Chandra Hang', staffType: 'Chefs' },
+    { name: 'Ashish Rai', staffType: 'Chefs' },
+    { name: 'Bhim Maya Didi', staffType: 'Housekeeping' },
+    { name: 'Yuvraj Bhattarai', staffType: 'Service' },
+    { name: 'Nikita Rai', staffType: 'Service' },
+    { name: 'Phibia Rai', staffType: 'Service' },
+    { name: 'Pesal Yakkha', staffType: 'Service' },
+    { name: 'Trishala Magar', staffType: 'Service' },
+    { name: 'Krish Shah', staffType: 'Service' },
+    { name: 'Sandhya Rai', staffType: 'Service' },
+    { name: 'Anish Khawas', staffType: 'Service' },
+    { name: 'Aavash Jha', staffType: 'Service' },
+    { name: 'Niru Magar', staffType: 'Dishwasher' },
+    { name: 'Sunil Pamchakoti', staffType: 'Guard' },
+  ];
+
+  const staffUpserts = staffData.map(async (staff) => {
+    return await prisma.staff.upsert({
+      where: { name: staff.name }, // Corrected where condition
+      update: { staffType: staff.staffType },
+      create: { name: staff.name, staffType: staff.staffType },
+    });
+  });
+
+  await Promise.all(staffUpserts);
 }
 
 main()

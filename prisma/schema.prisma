@@ -76,15 +76,22 @@ model ProductCategory {
   isActive    Boolean   @default(true)
 }
 
-model RestaurantTable {
+// Define an enum for the area types
+
+// Define the DiningArea model
+model Area {
   id        Int      @id @default(autoincrement())
-  number    Int      @unique
-  seats     Int
+  name      String   @unique
+  areaType  String // Use the enum type for areaType
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   isActive  Boolean  @default(true)
+
+  // Define the sales relationship
+  sales Sales[] // One-to-many relationship with Sales
 }
 
+// Define the Sales model
 model Sales {
   id             String   @id @default(cuid())
   tranDate       Int
@@ -95,19 +102,23 @@ model Sales {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  productId Int
+  productId Int // Foreign key to Product
   product   Product @relation(fields: [productId], references: [id])
 
-  staffId Int
+  staffId Int // Foreign key to Staff
   staff   Staff @relation(fields: [staffId], references: [id])
+
+  areaId Int // Foreign key to DiningArea
+  area   Area @relation(fields: [areaId], references: [id])
 }
 
 model Staff {
   id        Int      @id @default(autoincrement())
-  name      String
+  name      String   @unique
+  staffType String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  isActive  Boolean
+  isActive  Boolean  @default(true)
 
   sales Sales[]
 }

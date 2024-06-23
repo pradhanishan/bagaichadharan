@@ -13,7 +13,7 @@ const NavigationDrawerItem = ({ title, contents }: NavigationDrawerItemProps) =>
         <NavigationDrawerTitle name={title} />
         <div className="pl-6">
           {contents.map((content, index) => (
-            <NavigationDrawerContent key={`content-${index}`} name={content} />
+            <NavigationDrawerContent key={`content-${index}`} name={content} title={title} />
           ))}
         </div>
       </div>
