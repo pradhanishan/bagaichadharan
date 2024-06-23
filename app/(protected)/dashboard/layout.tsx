@@ -3,7 +3,7 @@ import { NavigationDrawer } from '@/components/layout/navigation-drawer/navigati
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-gray-100 dark:bg-gray-900">
+    <div className="flex flex-col h-screen overflow-hidden bg-gray-100 dark:bg-gray-900 max-h-screen max-w-screen">
       {/* Header */}
       <Header />
 
@@ -13,7 +13,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <NavigationDrawer />
 
         {/* Right Content Area */}
-        <div className="flex-1 bg-slate-200/35 dark:bg-gray-800 overflow-y-auto">
+        <div className="flex-1 b overflow-y-auto">
           <div className="p-4">{children}</div>
         </div>
       </div>
