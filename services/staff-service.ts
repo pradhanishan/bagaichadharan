@@ -12,9 +12,17 @@ async function getAllStaffs(): Promise<{ id: number; name: string }[]> {
   }));
 }
 
+async function getAllServiceStaffs(): Promise<{ id: number; name: string }[]> {
+  const staffs = await prisma.staff.findMany({ where: { staffType: 'Service' }, orderBy: { name: 'asc' } });
+  return staffs.map((staff) => ({
+    id: staff.id,
+    name: staff.name,
+  }));
+}
+
 async function getStaffById(id: number) {
   const staff = await prisma.staff.findUnique({ where: { id } });
   return staff;
 }
 
-export { getAllStaffs, getStaffById };
+export { getAllStaffs, getStaffById, getAllServiceStaffs };

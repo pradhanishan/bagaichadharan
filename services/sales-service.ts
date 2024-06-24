@@ -72,4 +72,36 @@ async function getSalesDetailsByTransaction(transactionNo: string) {
   }));
 }
 
-export { createSalesTransaction, getSalesTransactionbyId, getSalesDetailsByTransaction };
+async function getRecentTransactionsSummary({ take, skip }: { take: number; skip: number }) {
+  const transactions: {
+    tranDate: number;
+    transactionNo: string;
+    updatedAt: string;
+    totalQuantitySold: number;
+    totalAmountSold: number;
+  }[] = await prisma.$queryRaw`
+    SELECT 
+      "tranDate",
+      "transactionNo",
+      MAX("updatedAt") as "updatedAt",
+      SUM("quantitySold") as "totalQuantitySold",
+      SUM("amountSold") as "totalAmountSold"
+    FROM 
+      public."Sales"
+    GROUP BY 
+      "tranDate", "transactionNo"
+    ORDER BY 
+      "tranDate" DESC
+    LIMIT ${take}
+    OFFSET ${skip}
+  `;
+
+  return transactions.map((transaction) => ({
+    tranDate: transaction.tranDate,
+    transactionNo: transaction.transactionNo,
+    updatedAt: transaction.updatedAt,
+    totalQuantitySold: transaction.totalQuantitySold,
+    totalAmountSold: transaction.totalAmountSold,
+  }));
+}
+export { createSalesTransaction, getSalesTransactionbyId, getSalesDetailsByTransaction, getRecentTransactionsSummary };

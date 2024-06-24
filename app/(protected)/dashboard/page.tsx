@@ -1,8 +1,3 @@
 export default function Dashboard() {
-  return (
-    <div>
-      Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellendus sint consequatur, error, fuga cupiditate sed
-      temporibus quis cumque ducimus ullam recusandae minus dolor debitis beatae quas corporis, modi natus officia!
-    </div>
-  );
+  return <div className="w-full h-full flex flex-col justify-center items-center">Dashboard home page...</div>;
 }

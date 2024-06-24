@@ -1,6 +1,17 @@
 'use client';
 
 import { billActions } from '@/actions';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -23,13 +34,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { PlusCircledIcon } from '@radix-ui/react-icons';
 import { TrashIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import { SubmitHandler, useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 
 function EditBillForm({ salesId, transactionNo, menuItems, staffs, areas, initial }: EditBillFormProps) {
-  console.log();
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof EditBillSchema>>({
@@ -123,69 +134,61 @@ function EditBillForm({ salesId, transactionNo, menuItems, staffs, areas, initia
             />
           </div>
         </div>
-
         {/* Form inputs for the row being added */}
-        <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-gray-800 border-b-2 border-gray-300 pb-2 mb-4">
-            Enter New Record
-          </h2>
-          <div className="grid grid-cols-12 gap-4 p-4 border rounded-md shadow-sm bg-blue-50 border-blue-400 dark:bg-gray-800 dark:border-gray-600">
+        <div className="grid grid-cols-12 gap-4 p-4 border rounded-md shadow-sm bg-green-50 border-yellow-400 dark:bg-gray-800 dark:border-gray-600">
+          <FormField
+            control={form.control}
+            name={`records.${fields.length - 1}.menuItemId`}
+            render={({ field }) => (
+              <FormItem className="col-span-12 md:col-span-4">
+                <FormLabel className="dark:text-gray-300">Item</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select menu item" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent className="max-h-48 overflow-y-auto">
+                    {menuItems.map((menuItem) => (
+                      <SelectItem key={menuItem.id} value={String(menuItem.id)}>
+                        {menuItem.item}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="col-span-12 md:col-span-4 flex gap-4">
             <FormField
               control={form.control}
-              name={`records.${fields.length - 1}.menuItemId`}
+              name={`records.${fields.length - 1}.quantitySold`}
               render={({ field }) => (
-                <FormItem className="col-span-12 md:col-span-4">
-                  <FormLabel className="dark:text-gray-300">Item</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Item" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="max-h-48 overflow-y-auto">
-                      {menuItems.map((menuItem) => (
-                        <SelectItem key={menuItem.id} value={String(menuItem.id)}>
-                          {menuItem.item}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                <FormItem className="col-span-12">
+                  <FormLabel className="dark:text-gray-300">Quantity</FormLabel>
+                  <Input
+                    type="number"
+                    placeholder="Quantity Sold"
+                    {...field}
+                    className="dark:bg-gray-700 dark:text-gray-300 w-full px-3 py-2 rounded-md focus:outline-none focus:ring focus:border-blue-300"
+                  />
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <div className="col-span-12 md:col-span-4 flex gap-4">
-              <FormField
-                control={form.control}
-                name={`records.${fields.length - 1}.quantitySold`}
-                render={({ field }) => (
-                  <FormItem className="col-span-12">
-                    <FormLabel className="dark:text-gray-300">Quantity</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="Quantity Sold"
-                        {...field}
-                        className="dark:bg-gray-700 dark:text-gray-300 w-full px-3 py-2 rounded-md focus:outline-none focus:ring focus:border-blue-300"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="col-span-12 md:col-span-4 flex items-end justify-end gap-2 mt-2">
-              <Button
-                type="button"
-                onClick={() => append({ menuItemId: '', quantitySold: '' })}
-                className="flex items-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition duration-300 ease-in-out"
-              >
-                <PlusCircledIcon className="w-5 h-5 mr-2" /> Add
-              </Button>
-            </div>
+          </div>
+          <div className="col-span-12 md:col-span-4 flex items-end justify-end gap-2 mt-2">
+            <Button
+              type="button"
+              onClick={() => append({ menuItemId: '', quantitySold: '' })}
+              className="flex items-center bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md transition duration-300 ease-in-out"
+            >
+              <PlusCircledIcon className="w-5 h-5 mr-2" /> Add
+            </Button>
           </div>
         </div>
-        {/* <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 space-y-6"> */}
+        ;
         <Card className="shadow-lg mx-auto my-8 max-w-2xl border border-gray-300 rounded-lg">
           <CardHeader className="bg-green-800 p-4 rounded-t-lg flex items-center">
             <div className="flex gap-4 w-full justify-between items-center">
@@ -195,10 +198,12 @@ function EditBillForm({ salesId, transactionNo, menuItems, staffs, areas, initia
                   <span className="font-semibold">Transaction No:</span> {transactionNo}
                 </CardDescription>
                 <CardDescription className="mt-1 text-sm text-gray-300">
-                  <span className="font-semibold">Seat:</span> {initial.areaId}
+                  <span className="font-semibold">Seat:</span>{' '}
+                  {areas.filter((area) => String(area.id) === initial.areaId)[0].name}
                 </CardDescription>
                 <CardDescription className="mt-1 text-sm text-gray-300">
-                  <span className="font-semibold">Service:</span> {initial.staffId}{' '}
+                  <span className="font-semibold">Service:</span>{' '}
+                  {staffs.filter((staff) => String(staff.id) === initial.staffId)[0].name}
                 </CardDescription>
               </div>
               <div className="flex-shrink-0 mr-4">
@@ -207,7 +212,7 @@ function EditBillForm({ salesId, transactionNo, menuItems, staffs, areas, initia
             </div>
           </CardHeader>
           <CardContent className="p-4 bg-gray-50">
-            <Table className="min-w-full border">
+            <Table className="min-w-full border rounded-md overflow-hidden bg-gray-100">
               <TableHeader>
                 <TableRow className="bg-gray-200">
                   <TableHead className="w-[150px] p-3 text-left text-gray-700 font-semibold">Item</TableHead>
@@ -216,71 +221,73 @@ function EditBillForm({ salesId, transactionNo, menuItems, staffs, areas, initia
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {fields
-                  .filter((field) => field.menuItemId !== '')
-                  .map((item, idx) => {
-                    return (
-                      <TableRow className="border-b hover:bg-gray-100" key={idx}>
-                        <TableCell className="p-3 text-gray-600">
-                          {menuItems.find((menuItem) => String(menuItem.id) === item.menuItemId)?.item ||
-                            'Item not found'}
-                        </TableCell>
-                        <TableCell className="p-3 text-gray-600">
-                          <div className="col-span-12 md:col-span-4 flex gap-4">
-                            <FormField
-                              control={form.control}
-                              name={`records.${idx}.quantitySold`}
-                              render={({ field }) => (
-                                <FormItem className="col-span-12">
-                                  <FormLabel className="dark:text-gray-300">Quantity</FormLabel>
-                                  <FormControl>
-                                    <Input
-                                      type="number"
-                                      placeholder="Quantity Sold"
-                                      {...field}
-                                      className="dark:bg-gray-700 dark:text-gray-300 w-full px-3 py-2 rounded-md focus:outline-none focus:ring focus:border-blue-300"
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
+                {fields.map((item, idx) => (
+                  <TableRow key={idx} className="border-b hover:bg-gray-200">
+                    <TableCell className="p-3 text-gray-800">
+                      {menuItems.find((menuItem) => String(menuItem.id) === item.menuItemId)?.item || 'Item not found'}
+                    </TableCell>
+                    <TableCell className="p-3">
+                      <div className="flex items-center">
+                        <FormField
+                          control={form.control}
+                          name={`records.${idx}.quantitySold`}
+                          render={({ field }) => (
+                            <Input
+                              {...field}
+                              type="number"
+                              placeholder="Quantity Sold"
+                              className="w-full px-3 py-2 text-gray-800 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
                             />
-                          </div>
-                        </TableCell>
-                        <TableCell className="p-3 text-gray-600">
-                          <Button
-                            onClick={() => {
-                              remove(idx);
-                            }}
-                          >
-                            <TrashIcon />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
+                          )}
+                        />
+                      </div>
+                    </TableCell>
+                    <TableCell className="p-3">
+                      <Button
+                        onClick={() => {
+                          remove(idx);
+                        }}
+                        variant="outline"
+                        className="flex items-center text-red-600 hover:text-red-800"
+                      >
+                        <TrashIcon className="w-5 h-5 mr-1" />
+                        Remove
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
+
               <TableFooter>
                 <TableRow className="bg-gray-200">
-                  <TableCell colSpan={2} className="p-3 text-right font-bold text-gray-700">
+                  <TableCell colSpan={2} className="p-3 text-right font-bold text-gray-800">
                     Total
                   </TableCell>
-                  <TableCell className="p-3 text-right font-bold text-gray-700">₹100</TableCell>
+                  <TableCell className="p-3 text-right font-bold text-gray-800">₹100</TableCell>
                 </TableRow>
               </TableFooter>
             </Table>
           </CardContent>
           <CardFooter className="flex justify-between p-4 bg-gray-100 rounded-b-lg">
-            <Button
-              type="submit"
-              variant="outline"
-              className="border border-gray-300 text-gray-700 hover:bg-gray-200 flex gap-2 justify-center items-center"
-              onClick={() => {
-                redirect(`/dashboard/`);
-              }}
-            >
-              Done
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline">Save</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you sure you want to edit this transaction?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Please confirm that the bill is correct before you proceed.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction type="submit" onClick={() => router.push('/dashboard')}>
+                    Yes
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </CardFooter>
         </Card>
       </form>

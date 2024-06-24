@@ -3,7 +3,7 @@ import { areaService, menuService, staffService } from '@/services';
 
 async function CreateBill() {
   const menuItems = await menuService.getAllMenuItems();
-  const staffs = await staffService.getAllStaffs();
+  const staffs = await staffService.getAllServiceStaffs();
   const areas = await areaService.getAllAreas();
 
   return (

@@ -14,8 +14,8 @@ const dummyNavigationData = [
     items: [
       {
         title: 'Bill',
-        contents: ['Create'],
-        urls: ['/dashboard/bill/create'], // Define URLs for navigation items
+        contents: ['Create', 'Recent Bills'],
+        urls: ['/dashboard/bill/create', '/dashboard/bill/view'], // Define URLs for navigation items
       },
       {
         title: 'Expense',

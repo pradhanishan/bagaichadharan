@@ -1,27 +1,12 @@
 import { EditBillForm } from '@/components/bill/edit-bill-form';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import bagaichaImage from '@/public/bagaicha.jpeg';
 import { areaService, menuService, salesService, staffService } from '@/services';
-import { Pencil2Icon } from '@radix-ui/react-icons';
-import Image from 'next/image';
 
 export default async function EditBill({ params }: { params: { slug: string } }) {
   const transactionRecords = await salesService.getSalesDetailsByTransaction(params.slug);
   const transactionHasRecords = transactionRecords.length > 0;
 
   const menuItems = await menuService.getAllMenuItems();
-  const staffs = await staffService.getAllStaffs();
+  const staffs = await staffService.getAllServiceStaffs();
   const areas = await areaService.getAllAreas();
 
   if (!transactionHasRecords) {

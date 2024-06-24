@@ -78,3 +78,7 @@ export async function createBill(formData: z.infer<typeof BillSchemaUI>) {
 export async function editBill(formData: z.infer<typeof EditBillSchema>) {
   console.log(formData);
 }
+
+export async function getRecentTransactions({ take, skip }: { take: number; skip: number }) {
+  return await salesService.getRecentTransactionsSummary({ take, skip });
+}
