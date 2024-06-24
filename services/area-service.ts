@@ -12,4 +12,9 @@ async function getAllAreas(): Promise<{ id: number; name: string }[]> {
   }));
 }
 
-export { getAllAreas };
+async function getAreaById(id: number) {
+  const area = await prisma.area.findUnique({ where: { id } });
+  return area;
+}
+
+export { getAllAreas, getAreaById };

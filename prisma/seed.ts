@@ -382,6 +382,70 @@ async function main() {
   });
 
   await Promise.all(staffUpserts);
+
+  const menuItems = [
+    { name: 'Spaghetti Bolognese', description: 'Classic Italian pasta dish with rich meat sauce', price: 12.99 },
+    { name: 'Margherita Pizza', description: 'Pizza topped with fresh tomatoes, mozzarella, and basil', price: 10.99 },
+    { name: 'Caesar Salad', description: 'Crisp romaine lettuce with Caesar dressing and croutons', price: 8.99 },
+    { name: 'Grilled Salmon', description: 'Fresh salmon fillet grilled to perfection', price: 15.99 },
+    {
+      name: 'Chicken Alfredo',
+      description: 'Creamy Alfredo sauce over fettuccine pasta with grilled chicken',
+      price: 13.99,
+    },
+    { name: 'Beef Tacos', description: 'Soft tacos filled with seasoned beef, lettuce, and cheese', price: 9.99 },
+    { name: 'Vegetable Stir Fry', description: 'Mixed vegetables stir-fried with soy sauce', price: 11.99 },
+    { name: 'Cheeseburger', description: 'Juicy beef patty with melted cheese, lettuce, and tomato', price: 10.49 },
+    {
+      name: 'Chicken Caesar Wrap',
+      description: 'Grilled chicken, romaine lettuce, and Caesar dressing in a wrap',
+      price: 9.49,
+    },
+    { name: 'Shrimp Scampi', description: 'Shrimp sautéed in garlic butter sauce over linguine', price: 14.99 },
+    { name: 'Penne Arrabbiata', description: 'Spicy tomato sauce with penne pasta', price: 11.49 },
+    { name: 'Greek Salad', description: 'Fresh salad with tomatoes, cucumbers, olives, and feta cheese', price: 8.49 },
+    { name: 'BBQ Ribs', description: 'Slow-cooked ribs with BBQ sauce', price: 16.99 },
+    { name: 'Fish and Chips', description: 'Fried fish fillet with crispy fries', price: 12.49 },
+    { name: 'Veggie Burger', description: 'Vegetarian burger with lettuce, tomato, and avocado', price: 9.99 },
+    { name: 'Chicken Quesadilla', description: 'Grilled chicken and cheese in a flour tortilla', price: 8.99 },
+    { name: 'Mushroom Risotto', description: 'Creamy risotto with sautéed mushrooms', price: 13.49 },
+    { name: 'BLT Sandwich', description: 'Bacon, lettuce, and tomato on toasted bread', price: 7.99 },
+    { name: 'Lobster Bisque', description: 'Rich and creamy lobster soup', price: 15.49 },
+    { name: 'Pad Thai', description: 'Thai stir-fried noodles with shrimp, tofu, and peanuts', price: 12.99 },
+    {
+      name: 'Chicken Parmesan',
+      description: 'Breaded chicken breast topped with marinara sauce and cheese',
+      price: 14.49,
+    },
+    { name: 'Beef Stroganoff', description: 'Tender beef in creamy mushroom sauce over noodles', price: 13.99 },
+    { name: 'Caprese Salad', description: 'Tomatoes, mozzarella, and basil drizzled with balsamic glaze', price: 9.49 },
+    { name: 'Pulled Pork Sandwich', description: 'Slow-cooked pulled pork with BBQ sauce on a bun', price: 10.49 },
+    { name: 'Eggplant Parmesan', description: 'Breaded eggplant slices with marinara and cheese', price: 11.49 },
+    { name: 'Margarita', description: 'Classic cocktail with tequila, lime juice, and Cointreau', price: 8.99 },
+    { name: 'Chocolate Lava Cake', description: 'Warm chocolate cake with a gooey center', price: 6.99 },
+    { name: 'Apple Pie', description: 'Traditional apple pie with a flaky crust', price: 5.99 },
+    { name: 'New York Cheesecake', description: 'Creamy cheesecake with a graham cracker crust', price: 7.49 },
+    {
+      name: 'Tiramisu',
+      description: 'Classic Italian dessert with layers of coffee-soaked ladyfingers and mascarpone cheese',
+      price: 6.49,
+    },
+  ];
+
+  const menuUpserts = menuItems.map(async (item) => {
+    return await prisma.menu.upsert({
+      where: { item: item.name }, // Ensure unique constraint on 'item' field
+      update: {
+        price: item.price,
+        isActive: true, // Assuming you want to set isActive to true if item exists
+      },
+      create: {
+        item: item.name,
+        price: item.price,
+      },
+    });
+  });
+  await Promise.all(menuUpserts);
 }
 
 main()

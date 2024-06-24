@@ -1,8 +1,8 @@
 import { BillForm } from '@/components/bill/bill-form';
-import { areaService, productService, staffService } from '@/services';
+import { areaService, menuService, staffService } from '@/services';
 
 async function CreateBill() {
-  const products = await productService.getAllProducts();
+  const menuItems = await menuService.getAllMenuItems();
   const staffs = await staffService.getAllStaffs();
   const areas = await areaService.getAllAreas();
 
@@ -18,7 +18,7 @@ async function CreateBill() {
           </p>
         </div>
         <div className="bg-white dark:bg-gray-800 shadow sm:rounded-lg p-8">
-          <BillForm products={products} staffs={staffs} areas={areas} />
+          <BillForm menuItems={menuItems} staffs={staffs} areas={areas} />
         </div>
       </div>
     </div>

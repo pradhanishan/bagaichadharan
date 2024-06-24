@@ -12,4 +12,9 @@ async function getAllStaffs(): Promise<{ id: number; name: string }[]> {
   }));
 }
 
-export { getAllStaffs };
+async function getStaffById(id: number) {
+  const staff = await prisma.staff.findUnique({ where: { id } });
+  return staff;
+}
+
+export { getAllStaffs, getStaffById };

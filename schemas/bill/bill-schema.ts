@@ -1,16 +1,27 @@
 // Assuming TransactionSchema is defined in '@/schemas'
 import { z } from 'zod';
 
-const BillSchema = z.object({
-  staffId: z.string().min(1), // Ensure staffId is a non-empty string
-  areaId: z.string().min(1),
+const BillSchemaUI = z.object({
+  staffId: z.string(), // Ensure staffId is a non-empty string
+  areaId: z.string(),
   records: z.array(
     z.object({
-      productId: z.string().min(1), // Ensure productId is a non-empty string
-      quantitySold: z.number().min(0), // Ensure quantitySold is a number and >= 0
-      amountSold: z.number().min(0), // Ensure amountSold is a number and >= 0
+      menuItemId: z.string(), // Ensure menuItemId is a non-empty string
+      quantitySold: z.string(), // Ensure quantitySold is a number and >= 0
     }),
   ),
 });
 
-export { BillSchema };
+const BillSchema = z.object({
+  staffId: z.number(),
+  areaId: z.number(),
+  records: z.array(
+    z.object({
+      menuItemId: z.number(),
+      quantitySold: z.number(),
+      amountSold: z.number(),
+    }),
+  ),
+});
+
+export { BillSchemaUI, BillSchema };

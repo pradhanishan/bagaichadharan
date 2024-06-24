@@ -1,5 +1,6 @@
 'use client';
 
+import { billActions } from '@/actions';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -14,43 +15,23 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useCurrentUser } from '@/hooks/use-current-user';
-import { BillSchema } from '@/schemas';
+import { BillSchemaUI } from '@/schemas';
+import type { BillFormProps } from '@/types/TBillFormProps';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PlusCircledIcon, TrashIcon } from '@radix-ui/react-icons';
+import { useTransition } from 'react';
 import { SubmitHandler, useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 
-type Product = {
-  id: number;
-  name: string;
-};
+function BillForm({ menuItems, staffs, areas }: BillFormProps) {
+  const [isPending, startTransition] = useTransition();
 
-type Staff = {
-  id: number;
-  name: string;
-};
-
-type Area = {
-  id: number;
-  name: string;
-};
-
-type BillFormProps = {
-  products: Product[];
-  staffs: Staff[];
-  areas: Area[];
-};
-
-function BillForm({ products, staffs, areas }: BillFormProps) {
-  const currentUser = useCurrentUser();
-
-  const form = useForm<z.infer<typeof BillSchema>>({
-    resolver: zodResolver(BillSchema),
+  const form = useForm<z.infer<typeof BillSchemaUI>>({
+    resolver: zodResolver(BillSchemaUI),
     defaultValues: {
-      staffId: currentUser ? String(currentUser.id) : '',
+      staffId: '',
       areaId: '',
-      records: [{ productId: '', quantitySold: 0, amountSold: 0 }],
+      records: [{ menuItemId: '', quantitySold: '0' }],
     },
   });
 
@@ -58,24 +39,33 @@ function BillForm({ products, staffs, areas }: BillFormProps) {
 
   const records = useWatch({ control: form.control, name: 'records' });
 
-  const isAddButtonDisabled = !records.every(
-    (record) => record.productId && record.quantitySold !== undefined && record.amountSold !== undefined,
-  );
-
-  const onSubmit: SubmitHandler<z.infer<typeof BillSchema>> = (formData) => {
-    console.log(formData);
+  const onSubmit: SubmitHandler<z.infer<typeof BillSchemaUI>> = (formData) => {
+    startTransition(() => {
+      billActions.createBill(formData);
+    });
   };
 
   const calculateTotalBill = () => {
-    return records.reduce((total, record) => total + (Number(record.amountSold) || 0), 0).toFixed(2);
+    let total = 0;
+    records.forEach((record) => {
+      const menuItem = menuItems.find((item) => item.id === +record.menuItemId);
+      if (menuItem) {
+        const quantitySold = isNaN(Number(record.quantitySold)) ? 0 : Number(record.quantitySold);
+        total += menuItem.price * quantitySold;
+      }
+    });
+    return total.toFixed(2);
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      {/* <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 space-y-6"> */}
+      <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 space-y-6">
         {/* Staff and Area Selection */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">Select Staff and Area</h2>
+          <h2 className="text-2xl font-semibold text-gray-800 border-b-2 border-gray-300 pb-2 mb-4">
+            Select Staff and Area
+          </h2>
           <div className="grid grid-cols-2 gap-4">
             {/* Staff Selection */}
             <FormField
@@ -139,11 +129,13 @@ function BillForm({ products, staffs, areas }: BillFormProps) {
 
         {/* Form inputs for the row being added */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">Enter New Record</h2>
+          <h2 className="text-2xl font-semibold text-gray-800 border-b-2 border-gray-300 pb-2 mb-4">
+            Enter New Record
+          </h2>
           <div className="grid grid-cols-12 gap-4 p-4 border rounded-md shadow-sm bg-blue-50 border-blue-400 dark:bg-gray-800 dark:border-gray-600">
             <FormField
               control={form.control}
-              name={`records.${fields.length - 1}.productId`}
+              name={`records.${fields.length - 1}.menuItemId`}
               render={({ field }) => (
                 <FormItem className="col-span-12 md:col-span-4">
                   <FormLabel className="dark:text-gray-300">Item</FormLabel>
@@ -154,9 +146,9 @@ function BillForm({ products, staffs, areas }: BillFormProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="max-h-48 overflow-y-auto">
-                      {products.map((product) => (
-                        <SelectItem key={product.id} value={String(product.id)}>
-                          {product.name}
+                      {menuItems.map((menuItem) => (
+                        <SelectItem key={menuItem.id} value={String(menuItem.id)}>
+                          {menuItem.item}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -177,25 +169,7 @@ function BillForm({ products, staffs, areas }: BillFormProps) {
                         type="number"
                         placeholder="Quantity Sold"
                         {...field}
-                        className="dark:bg-gray-700 dark:text-gray-300 w-full px-2 py-1 rounded-md focus:outline-none focus:ring focus:border-blue-300"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name={`records.${fields.length - 1}.amountSold`}
-                render={({ field }) => (
-                  <FormItem className="col-span-12">
-                    <FormLabel className="dark:text-gray-300">Amount</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="Amount Sold"
-                        {...field}
-                        className="dark:bg-gray-700 dark:text-gray-300 w-full px-2 py-1 rounded-md focus:outline-none focus:ring focus:border-blue-300"
+                        className="dark:bg-gray-700 dark:text-gray-300 w-full px-3 py-2 rounded-md focus:outline-none focus:ring focus:border-blue-300"
                       />
                     </FormControl>
                     <FormMessage />
@@ -206,8 +180,7 @@ function BillForm({ products, staffs, areas }: BillFormProps) {
             <div className="col-span-12 md:col-span-4 flex items-end justify-end gap-2 mt-2">
               <Button
                 type="button"
-                onClick={() => append({ productId: '', quantitySold: 0, amountSold: 0 })}
-                disabled={isAddButtonDisabled}
+                onClick={() => append({ menuItemId: '', quantitySold: '' })}
                 className="flex items-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition duration-300 ease-in-out"
               >
                 <PlusCircledIcon className="w-5 h-5 mr-2" /> Add
@@ -218,7 +191,7 @@ function BillForm({ products, staffs, areas }: BillFormProps) {
 
         {/* Bill Container */}
         <div className="bg-white border border-gray-300 rounded-md shadow-sm p-6 mt-6 dark:bg-gray-800">
-          <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-4">Bill</h2>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Bill</h2>
 
           {/* Display Selected Staff and Area */}
           <div className="flex justify-between mb-4">
@@ -242,16 +215,16 @@ function BillForm({ products, staffs, areas }: BillFormProps) {
               <TableCaption className="text-lg font-medium">Bill Records</TableCaption>
               <TableHeader>
                 <TableRow className="bg-gray-200 dark:bg-gray-700">
-                  <TableHead className="py-3 px-6 text-left text-sm font-bold text-gray-700 uppercase border-b border-gray-300 dark:border-gray-500 w-2/5">
+                  <TableHead className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase border-b border-gray-300 dark:border-gray-500 w-2/5">
                     Item
                   </TableHead>
-                  <TableHead className="py-3 px-6 text-left text-sm font-bold text-gray-700 uppercase border-b border-gray-300 dark:border-gray-500 w-1/5">
+                  <TableHead className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase border-b border-gray-300 dark:border-gray-500 w-1/5">
                     Quantity
                   </TableHead>
-                  <TableHead className="py-3 px-6 text-left text-sm font-bold text-gray-700 uppercase border-b border-gray-300 dark:border-gray-500 w-1/5">
+                  <TableHead className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase border-b border-gray-300 dark:border-gray-500 w-1/5">
                     Amount
                   </TableHead>
-                  <TableHead className="py-3 px-6 text-left text-sm font-bold text-gray-700 uppercase border-b border-gray-300 dark:border-gray-500 w-1/5">
+                  <TableHead className="px-6 py-3 text-left text-sm font-bold text-gray-700 uppercase border-b border-gray-300 dark:border-gray-500 w-1/5">
                     Actions
                   </TableHead>
                 </TableRow>
@@ -262,34 +235,27 @@ function BillForm({ products, staffs, areas }: BillFormProps) {
                     key={item.id}
                     className={index % 2 === 0 ? 'bg-gray-100 dark:bg-gray-700' : 'bg-white dark:bg-gray-800'}
                   >
-                    <TableCell className="py-3 px-6 text-sm dark:text-gray-300 w-2/5">
+                    <TableCell className="px-6 py-3 text-sm dark:text-gray-300 w-2/5">
                       {index !== fields.length - 1
-                        ? products.find((product) => product.id === +item.productId)?.name || 'Unknown Product'
-                        : 'Currently Adding'}
+                        ? menuItems.find((menuItem) => menuItem.id === +item.menuItemId)?.item || 'Unknown Item'
+                        : null}
                     </TableCell>
-                    <TableCell className="py-3 px-6 text-sm dark:text-gray-300 w-1/5">
-                      {index !== fields.length - 1 ? (
-                        item.quantitySold
-                      ) : (
-                        <Input
-                          type="number"
-                          {...form.register(`records.${index}.quantitySold`)}
-                          className="dark:bg-gray-700 dark:text-gray-300 w-full px-2 py-1 rounded-md focus:outline-none focus:ring focus:border-blue-300"
-                        />
-                      )}
+                    <TableCell className="px-6 py-3 text-sm dark:text-gray-300 w-1/5">
+                      {index !== fields.length - 1 ? item.quantitySold : null}
                     </TableCell>
-                    <TableCell className="py-3 px-6 text-sm dark:text-gray-300 w-1/5">
-                      {index !== fields.length - 1 ? (
-                        item.amountSold
-                      ) : (
-                        <Input
-                          type="number"
-                          {...form.register(`records.${index}.amountSold`)}
-                          className="dark:bg-gray-700 dark:text-gray-300 w-full px-2 py-1 rounded-md focus:outline-none focus:ring focus:border-blue-300"
-                        />
-                      )}
+                    <TableCell className="px-6 py-3 text-sm dark:text-gray-300 w-1/5">
+                      {index !== fields.length - 1
+                        ? menuItems.find((menuItem) => menuItem.id === +item.menuItemId)
+                          ? (
+                              (menuItems.find((menuItem) => menuItem.id === +item.menuItemId)?.price || 0) *
+                              Number(item.quantitySold)
+                            ) // Convert quantitySold to Number
+                              .toFixed(2)
+                          : '0.00'
+                        : ''}
                     </TableCell>
-                    <TableCell className="py-3 px-6 w-1/5">
+
+                    <TableCell className="px-6 py-3 w-1/5">
                       {index !== fields.length - 1 && (
                         <Button type="button" onClick={() => remove(index)} className="text-red-600 hover:text-red-900">
                           <TrashIcon className="w-5 h-5" />
@@ -307,11 +273,11 @@ function BillForm({ products, staffs, areas }: BillFormProps) {
             <Table>
               <TableFooter>
                 <TableRow className="bg-gray-200 dark:bg-gray-700">
-                  <TableCell colSpan={2} className="py-3 px-6 text-lg font-medium text-gray-700 uppercase">
+                  <TableCell colSpan={2} className="px-6 py-3 text-lg font-medium text-gray-700 uppercase">
                     Total Bill
                   </TableCell>
-                  <TableCell colSpan={2} className="py-3 px-6 text-lg font-medium text-gray-700 uppercase text-right">
-                    $ {calculateTotalBill()}
+                  <TableCell colSpan={2} className="px-6 py-3 text-lg font-medium text-gray-700 uppercase text-right">
+                    ₹ {calculateTotalBill()}
                   </TableCell>
                 </TableRow>
               </TableFooter>
@@ -320,7 +286,7 @@ function BillForm({ products, staffs, areas }: BillFormProps) {
         </div>
 
         {/* Submit Button */}
-        <div className="flex justify-end mt-4">
+        <div className="flex justify-end">
           <Button
             type="submit"
             className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-md transition duration-300 ease-in-out"

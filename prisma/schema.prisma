@@ -62,8 +62,6 @@ model Product {
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
   isActive          Boolean         @default(true)
-
-  sales Sales[]
 }
 
 model ProductCategory {
@@ -102,8 +100,8 @@ model Sales {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  productId Int // Foreign key to Product
-  product   Product @relation(fields: [productId], references: [id])
+  menuId Int // Foreign key to Product
+  menu   Menu @relation(fields: [menuId], references: [id])
 
   staffId Int // Foreign key to Staff
   staff   Staff @relation(fields: [staffId], references: [id])
@@ -121,4 +119,14 @@ model Staff {
   isActive  Boolean  @default(true)
 
   sales Sales[]
+}
+
+model Menu {
+  id        Int      @id @default(autoincrement())
+  item      String   @unique
+  price     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isActive  Boolean  @default(true)
+  Sales     Sales[]
 }
