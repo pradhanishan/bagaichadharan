@@ -1,7 +1,7 @@
 import { BillForm } from '@/components/bill/bill-form';
 import { areaService, productService, staffService } from '@/services';
 
-async function Transaction() {
+async function CreateBill() {
   const products = await productService.getAllProducts();
   const staffs = await staffService.getAllStaffs();
   const areas = await areaService.getAllAreas();
@@ -25,4 +25,4 @@ async function Transaction() {
   );
 }
 
-export default Transaction;
+export default CreateBill;

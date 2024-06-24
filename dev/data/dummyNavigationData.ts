@@ -18,9 +18,9 @@ const dummyNavigationData = [
         urls: ['/dashboard/bill/create'], // Define URLs for navigation items
       },
       {
-        title: 'Stock',
+        title: 'Expense',
         contents: ['Create'],
-        urls: ['/dashboard/stock/create'], // Define URLs for navigation items
+        urls: ['/dashboard/expense/create'], // Define URLs for navigation items
       },
     ],
   },
