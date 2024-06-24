@@ -20,4 +20,18 @@ type BillFormProps = {
   areas: Area[];
 };
 
-export type { BillFormProps };
+type EditBillFormProps = {
+  salesId: string;
+  transactionNo: string;
+  menuItems: MenuItem[];
+  staffs: Staff[];
+  areas: Area[];
+  initial: {
+    salesId: string;
+    staffId: string;
+    areaId: string;
+    records: { menuItemId: string; quantitySold: string }[];
+  };
+};
+
+export type { BillFormProps, EditBillFormProps };

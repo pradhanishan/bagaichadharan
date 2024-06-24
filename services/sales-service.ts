@@ -35,16 +35,19 @@ async function getSalesDetailsByTransaction(transactionNo: string) {
       createdAt: true,
       area: {
         select: {
+          id: true,
           name: true,
         },
       },
       menu: {
         select: {
+          id: true,
           item: true,
         },
       },
       staff: {
         select: {
+          id: true,
           name: true,
         },
       },
@@ -56,6 +59,9 @@ async function getSalesDetailsByTransaction(transactionNo: string) {
     tranDate: sale.tranDate,
     transactionNo: sale.transactionNo,
     salesId: sale.id,
+    areaId: sale.area.id,
+    staffId: sale.staff.id,
+    menuItemId: sale.menu.id,
     quantitySold: sale.quantitySold,
     amountSold: sale.amountSold,
     discountAmount: sale.discountAmount,

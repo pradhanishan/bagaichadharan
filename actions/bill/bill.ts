@@ -1,6 +1,6 @@
 'use server';
 
-import { BillSchema, BillSchemaUI } from '@/schemas';
+import { BillSchema, BillSchemaUI, EditBillSchema } from '@/schemas';
 import { menuService, salesService } from '@/services';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
@@ -73,4 +73,8 @@ export async function createBill(formData: z.infer<typeof BillSchemaUI>) {
   }
   // TODO:revalidate transaction related pages.
   redirect(`/dashboard/bill/view/${transactionNo}`);
+}
+
+export async function editBill(formData: z.infer<typeof EditBillSchema>) {
+  console.log(formData);
 }

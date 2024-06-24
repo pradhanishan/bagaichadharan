@@ -24,4 +24,17 @@ const BillSchema = z.object({
   ),
 });
 
-export { BillSchemaUI, BillSchema };
+const EditBillSchema = z.object({
+  salesId: z.string(),
+  transactionNo: z.string(),
+  staffId: z.string(),
+  areaId: z.string(),
+  records: z.array(
+    z.object({
+      menuItemId: z.string(),
+      quantitySold: z.string(),
+    }),
+  ),
+});
+
+export { BillSchemaUI, BillSchema, EditBillSchema };
