@@ -221,7 +221,7 @@ function EditBillForm({ salesId, transactionNo, menuItems, staffs, areas, initia
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {fields.map((item, idx) => (
+                {fields.slice(0, fields.length - 1).map((item, idx) => (
                   <TableRow key={idx} className="border-b hover:bg-gray-200">
                     <TableCell className="p-3 text-gray-800">
                       {menuItems.find((menuItem) => String(menuItem.id) === item.menuItemId)?.item || 'Item not found'}
@@ -259,12 +259,7 @@ function EditBillForm({ salesId, transactionNo, menuItems, staffs, areas, initia
               </TableBody>
 
               <TableFooter>
-                <TableRow className="bg-gray-200">
-                  <TableCell colSpan={2} className="p-3 text-right font-bold text-gray-800">
-                    Total
-                  </TableCell>
-                  <TableCell className="p-3 text-right font-bold text-gray-800">₹100</TableCell>
-                </TableRow>
+                <TableRow className="bg-gray-200"></TableRow>
               </TableFooter>
             </Table>
           </CardContent>
@@ -282,7 +277,7 @@ function EditBillForm({ salesId, transactionNo, menuItems, staffs, areas, initia
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction type="submit" onClick={() => router.push('/dashboard')}>
+                  <AlertDialogAction type="submit" onClick={() => router.push('/dashboard/bill/view')}>
                     Yes
                   </AlertDialogAction>
                 </AlertDialogFooter>
