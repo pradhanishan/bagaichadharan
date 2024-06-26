@@ -1,13 +1,10 @@
 import { EditBillForm } from '@/components/bill/edit-bill-form';
-import { areaService, menuService, salesService, staffService } from '@/services';
+import { billService } from '@/services';
 
 export default async function EditBill({ params }: { params: { slug: string } }) {
-  const transactionRecords = await salesService.getSalesDetailsByTransaction(params.slug);
+  const transactionRecords = await billService.getTransactionDetailsByTransaction(params.slug);
+  const { menuItems, staffs, areas } = await billService.getStaffsBillsAndMenuItems();
   const transactionHasRecords = transactionRecords.length > 0;
-
-  const menuItems = await menuService.getAllMenuItems();
-  const staffs = await staffService.getAllServiceStaffs();
-  const areas = await areaService.getAllAreas();
 
   if (!transactionHasRecords) {
     return <div className="text-center text-lg font-semibold mt-4">No transaction found</div>;

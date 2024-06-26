@@ -1,7 +1,7 @@
 'use server';
 
 import { BillSchema, BillSchemaUI, EditBillSchema } from '@/schemas';
-import { menuService, salesService } from '@/services';
+import { billService, menuService, salesService } from '@/services';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
@@ -80,5 +80,5 @@ export async function editBill(formData: z.infer<typeof EditBillSchema>) {
 }
 
 export async function getRecentTransactions({ take, skip }: { take: number; skip: number }) {
-  return await salesService.getRecentTransactionsSummary({ take, skip });
+  return await billService.getRecentTransactionsSummary({ take, skip });
 }

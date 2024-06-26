@@ -1,10 +1,8 @@
 import { BillForm } from '@/components/bill/bill-form';
-import { areaService, menuService, staffService } from '@/services';
+import { billService } from '@/services';
 
 async function CreateBill() {
-  const menuItems = await menuService.getAllMenuItems();
-  const staffs = await staffService.getAllServiceStaffs();
-  const areas = await areaService.getAllAreas();
+  const { menuItems, staffs, areas } = await billService.getStaffsBillsAndMenuItems();
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-100 dark:bg-gray-900 py-12 px-6 lg:px-8">
