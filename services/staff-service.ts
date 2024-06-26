@@ -1,16 +1,25 @@
+// staff-service.ts
 import staffRepository from '@/repository/staff-repository';
 import type { Staff } from '@/types/data-models';
 
-async function getAllStaffs(): Promise<Staff[]> {
-  return (await staffRepository.getAll()) as Staff[];
+interface IStaffService {
+  getAllStaffs(): Promise<Staff[]>;
+  getAllServiceStaffs(): Promise<Staff[]>;
+  getStaffById(id: number): Promise<Staff | null>;
 }
 
-async function getAllServiceStaffs(): Promise<Staff[]> {
-  return (await staffRepository.getAllServiceStaffs()) as Staff[];
-}
+const staffService: IStaffService = {
+  async getAllStaffs(): Promise<Staff[]> {
+    return (await staffRepository.getAll()) as Staff[];
+  },
 
-async function getStaffById(id: number): Promise<Staff | null> {
-  return (await staffRepository.getById(id)) as Staff | null;
-}
+  async getAllServiceStaffs(): Promise<Staff[]> {
+    return (await staffRepository.getAllServiceStaffs()) as Staff[];
+  },
 
-export { getAllStaffs, getStaffById, getAllServiceStaffs };
+  async getStaffById(id: number): Promise<Staff | null> {
+    return (await staffRepository.getById(id)) as Staff | null;
+  },
+};
+
+export default staffService;

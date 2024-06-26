@@ -1,9 +1,15 @@
-import prisma from '@/lib/db';
+// product-service.ts
 import productRepository from '@/repository/product-repository';
 import type { Product } from '@/types/data-models';
 
-async function getAllProducts(): Promise<Product[]> {
-  return (await productRepository.getAll()) as Product[];
+interface IProductService {
+  getAllProducts(): Promise<Product[]>;
 }
 
-export { getAllProducts };
+const productService: IProductService = {
+  async getAllProducts(): Promise<Product[]> {
+    return (await productRepository.getAll()) as Product[];
+  },
+};
+
+export default productService;

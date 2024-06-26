@@ -1,13 +1,20 @@
-import prisma from '@/lib/db';
+// area-service.ts
 import areaRepository from '@/repository/area-repository';
 import type { Area } from '@/types/data-models';
 
-async function getAllAreas(): Promise<Area[]> {
-  return (await areaRepository.getAll()) as Area[];
+interface IAreaService {
+  getAllAreas(): Promise<Area[]>;
+  getAreaById(id: number): Promise<Area | null>;
 }
 
-async function getAreaById(id: number): Promise<Area | null> {
-  return (await areaRepository.getById(id)) as Area | null;
-}
+const areaService: IAreaService = {
+  async getAllAreas(): Promise<Area[]> {
+    return (await areaRepository.getAll()) as Area[];
+  },
 
-export { getAllAreas, getAreaById };
+  async getAreaById(id: number): Promise<Area | null> {
+    return (await areaRepository.getById(id)) as Area | null;
+  },
+};
+
+export default areaService;
