@@ -122,11 +122,13 @@ model Staff {
 }
 
 model Menu {
-  id        Int      @id @default(autoincrement())
-  item      String   @unique
-  price     Float
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  isActive  Boolean  @default(true)
-  Sales     Sales[]
+  id          Int      @id @default(autoincrement())
+  item        String   @unique
+  price       Float
+  category    String
+  subCategory String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  isActive    Boolean  @default(true)
+  Sales       Sales[]
 }
