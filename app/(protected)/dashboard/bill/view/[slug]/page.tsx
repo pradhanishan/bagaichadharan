@@ -11,13 +11,13 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import bagaichaImage from '@/public/bagaicha.jpeg';
-import { salesService } from '@/services';
+import { billService } from '@/services';
 import { Pencil2Icon } from '@radix-ui/react-icons';
 import Image from 'next/image';
 import { redirect } from 'next/navigation';
 
 export default async function ViewBill({ params }: { params: { slug: string } }) {
-  const transactionRecords = await salesService.getSalesDetailsByTransaction(params.slug);
+  const transactionRecords = await billService.getTransactionDetailsByTransaction(params.slug);
   const transactionHasRecords = transactionRecords.length > 0;
 
   if (!transactionHasRecords) {

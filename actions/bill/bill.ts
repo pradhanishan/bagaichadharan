@@ -1,7 +1,7 @@
 'use server';
 
 import { BillSchema, BillSchemaUI, EditBillSchema } from '@/schemas';
-import { billService, menuService, salesService } from '@/services';
+import { billService, menuService } from '@/services';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
@@ -66,8 +66,7 @@ export async function createBill(formData: z.infer<typeof BillSchemaUI>) {
       };
     });
 
-    // Create sales transaction using salesService
-    const createdSales = await salesService.createSalesTransaction(insertObjects);
+    await billService.createSaleTransaction(insertObjects);
   } catch (error) {
     console.log(error);
   }

@@ -1,9 +1,17 @@
 // types.ts
-import { Area as PrismaArea, Menu as PrismaMenu, Sales as PrismaSales, Staff as PrismaStaff } from '@prisma/client';
+import {
+  Area as PrismaArea,
+  Menu as PrismaMenu,
+  Product as PrismaProduct,
+  Sales as PrismaSales,
+  Staff as PrismaStaff,
+} from '@prisma/client';
 
 export type Area = PrismaArea;
 export type Menu = PrismaMenu;
 export type Staff = PrismaStaff;
+export type Sales = PrismaSales;
+export type Product = PrismaProduct;
 
 // Define any additional types or interfaces you may need based on your business logic
 

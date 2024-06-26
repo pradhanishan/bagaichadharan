@@ -14,6 +14,17 @@ interface IBillService {
   getStaffsBillsAndMenuItems(): Promise<{ staffs: Staff[]; areas: Area[]; menuItems: Menu[] }>;
   getTransactionDetailsByTransaction(transactionNo: string): Promise<TTransactionDetailByTransaction[]>;
   getRecentTransactionsSummary({ take, skip }: { take: number; skip: number }): Promise<TRecentTransactionsSummary[]>;
+  createSaleTransaction(
+    data: {
+      staffId: number;
+      areaId: number;
+      transactionNo: string;
+      menuId: number;
+      quantitySold: number;
+      amountSold: number;
+      tranDate: number;
+    }[],
+  ): Promise<void>;
 }
 
 const billService: IBillService = {
@@ -37,6 +48,19 @@ const billService: IBillService = {
     skip: number;
   }): Promise<TRecentTransactionsSummary[]> {
     return await salesRepository.getRecentTransactionsSummary({ take, skip });
+  },
+  createSaleTransaction: async function (
+    data: {
+      staffId: number;
+      areaId: number;
+      transactionNo: string;
+      menuId: number;
+      quantitySold: number;
+      amountSold: number;
+      tranDate: number;
+    }[],
+  ): Promise<void> {
+    await salesRepository.createMany(data);
   },
 };
 

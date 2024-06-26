@@ -1,12 +1,13 @@
 import prisma from '@/lib/db';
-import { Prisma, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 // Define a base repository interface with generic type T
 interface BaseRepository<T> {
   getAll(): Promise<T[]>;
   getById(id: number): Promise<T | null>;
   getByIds(ids: number[]): Promise<T[]>;
-  create(data: Partial<T>): Promise<T>;
+  create(data: Partial<Omit<T, 'id'>>): Promise<T>;
+  createMany(data: Partial<Omit<T, 'id'>>[]): Promise<void>;
   update(id: number, data: Partial<T>): Promise<T | null>;
   delete(id: number): Promise<T | null>;
 }
@@ -37,11 +38,20 @@ export function createBaseRepository<T>(entityName: EntityNames): BaseRepository
       });
       return entities as T[];
     },
-    async create(data: Partial<T>): Promise<T> {
+    async create(data: Partial<Omit<T, 'id'>>): Promise<T> {
       const createdEntity = await (prisma[entityName] as any).create({
-        data,
+        data: data as any, // Cast data to any due to Prisma limitations
       });
       return createdEntity as T;
+    },
+    async createMany(data: Partial<Omit<T, 'id'>>[]): Promise<void> {
+      await prisma.$transaction(
+        data.map((item) =>
+          (prisma[entityName] as any).create({
+            data: item as any,
+          }),
+        ),
+      );
     },
     async update(id: number, data: Partial<T>): Promise<T | null> {
       const updatedEntity = await (prisma[entityName] as any).update({

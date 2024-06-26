@@ -8,6 +8,7 @@ const entityName = 'sales';
 interface ISalesRepository extends ReturnType<typeof createBaseRepository> {
   getTransactionDetailsByTransaction(transactionNo: string): Promise<TTransactionDetailByTransaction[]>;
   getRecentTransactionsSummary({ take, skip }: { take: number; skip: number }): Promise<TRecentTransactionsSummary[]>;
+  getSalesTransactionById(transactionNo: string): Promise<Sales[]>;
 }
 
 const salesRepository: ISalesRepository = {
@@ -86,6 +87,9 @@ const salesRepository: ISalesRepository = {
     LIMIT ${take}
     OFFSET ${skip}
   `;
+  },
+  getSalesTransactionById: async function (transactionNo: string): Promise<Sales[]> {
+    return await prisma.sales.findMany({ where: { transactionNo } });
   },
 };
 

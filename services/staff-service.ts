@@ -1,17 +1,16 @@
-import prisma from '@/lib/db';
-import { Staff } from '@prisma/client';
+import staffRepository from '@/repository/staff-repository';
+import type { Staff } from '@/types/data-models';
 
 async function getAllStaffs(): Promise<Staff[]> {
-  return await prisma.staff.findMany({ orderBy: { name: 'asc' } });
+  return (await staffRepository.getAll()) as Staff[];
 }
 
 async function getAllServiceStaffs(): Promise<Staff[]> {
-  return await prisma.staff.findMany({ where: { staffType: 'Service' }, orderBy: { name: 'asc' } });
+  return (await staffRepository.getAllServiceStaffs()) as Staff[];
 }
 
 async function getStaffById(id: number): Promise<Staff | null> {
-  const staff = await prisma.staff.findUnique({ where: { id } });
-  return staff;
+  return (await staffRepository.getById(id)) as Staff | null;
 }
 
 export { getAllStaffs, getStaffById, getAllServiceStaffs };
