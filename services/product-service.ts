@@ -12,4 +12,4 @@ const productService: IProductService = {
   },
 };
 
-export default productService;
+export { productService };

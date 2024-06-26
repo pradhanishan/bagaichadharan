@@ -12,4 +12,4 @@ const salesService: ISalesService = {
   },
 };
 
-export default salesService;
+export { salesService };

@@ -22,4 +22,4 @@ const menuService: IMenuService = {
   },
 };
 
-export default menuService;
+export { menuService };

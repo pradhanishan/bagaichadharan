@@ -22,4 +22,4 @@ const staffService: IStaffService = {
   },
 };
 
-export default staffService;
+export { staffService };

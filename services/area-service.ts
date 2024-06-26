@@ -17,4 +17,4 @@ const areaService: IAreaService = {
   },
 };
 
-export default areaService;
+export { areaService };
