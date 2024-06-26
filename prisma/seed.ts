@@ -419,7 +419,7 @@ async function main() {
     { item: 'Veg Fry Momo', category: 'Starters', subCategory: 'Momo', price: 170 },
     { item: 'Veg Jhol Momo', category: 'Starters', subCategory: 'Momo', price: 220 },
     { item: 'Chicken Steam Momo', category: 'Starters', subCategory: 'Momo', price: 200 },
-    { item: 'Chicken Meat Ball Soup', category: 'Soup', subCategory: '', price: 240 },
+    { item: 'Chicken Meat Ball Soup', category: 'Soup', subCategory: '-', price: 240 },
     { item: 'Cream of Chicken Soup', category: 'Soup', subCategory: '', price: 240 },
     { item: 'Cream of Mushroom Soup', category: 'Soup', subCategory: '', price: 180 },
     { item: 'Veg Hot and Sour', category: 'Soup', subCategory: '', price: 180 },
@@ -566,7 +566,7 @@ async function main() {
     { item: 'Extra Cheese Toppings', category: 'Pizza', subCategory: 'Toppings', price: 100 },
     { item: 'Bagaicha Special Mutton', category: 'Bagaicha Special', subCategory: 'Non-Vegetarian', price: 600 },
     {
-      item: 'Bagaicha Special Naan Stuffed with Processed Cheese and Dried Herbs',
+      item: 'Bagaicha Special Naan Stuffed With Processed Cheese and Dried Herbs',
       category: 'Bagaicha Special',
       subCategory: 'Vegetarian',
       price: 300,
