@@ -1,26 +1,15 @@
 import prisma from '@/lib/db';
+import { Staff } from '@prisma/client';
 
-/**
- * Retrieves all staffs from the database.
- * @returns {Promise<{ id: number; name: string; }[]>} Array of staffs with their id and name.
- */
-async function getAllStaffs(): Promise<{ id: number; name: string }[]> {
-  const staffs = await prisma.staff.findMany({ orderBy: { name: 'asc' } });
-  return staffs.map((staff) => ({
-    id: staff.id,
-    name: staff.name,
-  }));
+async function getAllStaffs(): Promise<Staff[]> {
+  return await prisma.staff.findMany({ orderBy: { name: 'asc' } });
 }
 
-async function getAllServiceStaffs(): Promise<{ id: number; name: string }[]> {
-  const staffs = await prisma.staff.findMany({ where: { staffType: 'Service' }, orderBy: { name: 'asc' } });
-  return staffs.map((staff) => ({
-    id: staff.id,
-    name: staff.name,
-  }));
+async function getAllServiceStaffs(): Promise<Staff[]> {
+  return await prisma.staff.findMany({ where: { staffType: 'Service' }, orderBy: { name: 'asc' } });
 }
 
-async function getStaffById(id: number) {
+async function getStaffById(id: number): Promise<Staff | null> {
   const staff = await prisma.staff.findUnique({ where: { id } });
   return staff;
 }

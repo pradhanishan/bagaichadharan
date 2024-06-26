@@ -1,31 +1,31 @@
 import prisma from '@/lib/db';
 import { Menu } from '@prisma/client';
 
-async function getAllMenuItems(): Promise<{ id: number; item: string; price: number }[]> {
-  const menuItems = await prisma.menu.findMany({ orderBy: { item: 'asc' } });
-  return menuItems.map((item) => ({
-    id: item.id,
-    item: item.item,
-    price: item.price,
-  }));
+/**
+ * Retrieves all menu items from the database, ordered by item name in ascending order.
+ *
+ * @returns {Promise<Menu[]>} A promise that resolves to an array of Menu objects.
+ */
+async function getAllMenuItems(): Promise<Menu[]> {
+  return await prisma.menu.findMany({ orderBy: { item: 'asc' } });
 }
 
-async function getMenuItemById(id: number): Promise<{ id: number; item: string; price: number } | null> {
-  const menuItem = await prisma.menu.findUnique({
-    where: { id },
-  });
-
-  if (!menuItem) {
-    return null; // Return null if no menu item found with the given ID
-  }
-
-  return {
-    id: menuItem.id,
-    item: menuItem.item,
-    price: menuItem.price,
-  };
+/**
+ * Retrieves a menu item by its unique ID.
+ *
+ * @param {number} id - The unique ID of the menu item to retrieve.
+ * @returns {Promise<Menu | null>} A promise that resolves to the Menu object if found, or null if not found.
+ */
+async function getMenuItemById(id: number): Promise<Menu | null> {
+  return await prisma.menu.findUnique({ where: { id } });
 }
 
+/**
+ * Retrieves multiple menu items by their IDs.
+ *
+ * @param {number[]} ids - An array of unique IDs of menu items to retrieve.
+ * @returns {Promise<Menu[]>} A promise that resolves to an array of Menu objects.
+ */
 async function getMenuItemsById(ids: number[]): Promise<Menu[]> {
   const menuItems = await prisma.menu.findMany({
     where: {

@@ -1,15 +1,13 @@
 import prisma from '@/lib/db';
+import { Product } from '@prisma/client';
 
 /**
- * Retrieves all products from the database.
- * @returns {Promise<{ id: number; name: string; }[]>} Array of products with their id and name.
+ * Retrieves all products from the database, ordered by product name in ascending order.
+ *
+ * @returns {Promise<Product[]>} A promise that resolves to an array of Product objects.
  */
-async function getAllProducts(): Promise<{ id: number; name: string }[]> {
-  const products = await prisma.product.findMany({ orderBy: { name: 'asc' } });
-  return products.map((product) => ({
-    id: product.id,
-    name: product.name,
-  }));
+async function getAllProducts(): Promise<Product[]> {
+  return await prisma.product.findMany({ orderBy: { name: 'asc' } });
 }
 
 export { getAllProducts };
