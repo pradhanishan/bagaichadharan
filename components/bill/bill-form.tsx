@@ -28,7 +28,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import bagaichaImage from '@/public/bagaicha.jpeg';
-import { BillSchemaUI } from '@/schemas';
+import { CreateBillSchema } from '@/schemas';
 import type { BillFormProps } from '@/types/TBillFormProps';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PlusCircledIcon, TrashIcon } from '@radix-ui/react-icons';
@@ -43,12 +43,12 @@ function BillForm({ menuItems, staffs, areas }: BillFormProps) {
 
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof BillSchemaUI>>({
-    resolver: zodResolver(BillSchemaUI),
+  const form = useForm<z.infer<typeof CreateBillSchema>>({
+    resolver: zodResolver(CreateBillSchema),
     defaultValues: {
       staffId: '',
       areaId: '',
-      records: [{ menuItemId: '', quantitySold: '0' }],
+      records: [{ menuItemId: '', quantitySold: 0 }],
     },
   });
 
@@ -56,16 +56,16 @@ function BillForm({ menuItems, staffs, areas }: BillFormProps) {
 
   const records = useWatch({ control: form.control, name: 'records' });
 
-  const onSubmit: SubmitHandler<z.infer<typeof BillSchemaUI>> = (formData) => {
+  const onSubmit: SubmitHandler<z.infer<typeof CreateBillSchema>> = (formData) => {
     startTransition(() => {
-      billActions.createBill(formData);
+      console.log('Reached');
     });
   };
 
   const calculateTotalBill = () => {
     let total = 0;
     records.forEach((record) => {
-      const menuItem = menuItems.find((item) => item.id === +record.menuItemId);
+      const menuItem = menuItems.find((item) => item.id === record.menuItemId);
       if (menuItem) {
         const quantitySold = isNaN(Number(record.quantitySold)) ? 0 : Number(record.quantitySold);
         total += menuItem.price * quantitySold;
@@ -186,6 +186,7 @@ function BillForm({ menuItems, staffs, areas }: BillFormProps) {
                         type="number"
                         placeholder="Quantity Sold"
                         {...field}
+                        onChange={(event) => field.onChange(+event.target.value)}
                         className="dark:bg-gray-700 dark:text-gray-300 w-full px-3 py-2 rounded-md focus:outline-none focus:ring focus:border-blue-300"
                       />
                     </FormControl>
@@ -197,7 +198,7 @@ function BillForm({ menuItems, staffs, areas }: BillFormProps) {
             <div className="col-span-12 md:col-span-4 flex items-end justify-end gap-2 mt-2">
               <Button
                 type="button"
-                onClick={() => append({ menuItemId: '', quantitySold: '' })}
+                onClick={() => append({ menuItemId: '', quantitySold: 0 })}
                 className="flex items-center bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md transition duration-300 ease-in-out"
               >
                 <PlusCircledIcon className="w-5 h-5 mr-2" /> Add
@@ -218,11 +219,11 @@ function BillForm({ menuItems, staffs, areas }: BillFormProps) {
                     {/* Replace with your actual data handling */}
                     <CardDescription className="mt-2 text-sm text-gray-300">
                       <span className="font-semibold">Staff:</span>{' '}
-                      {staffs.find((staff) => staff.id === +form.watch('staffId'))?.name || 'Not selected'}
+                      {staffs.find((staff) => staff.id === form.watch('staffId'))?.name || 'Not selected'}
                     </CardDescription>
                     <CardDescription className="mt-2 text-sm text-gray-300">
                       <span className="font-semibold">Area:</span>{' '}
-                      {areas.find((area) => area.id === +form.watch('areaId'))?.name || 'Not selected'}
+                      {areas.find((area) => area.id === form.watch('areaId'))?.name || 'Not selected'}
                     </CardDescription>
                   </div>
                   <div className="flex-shrink-0 mr-4">
@@ -245,7 +246,7 @@ function BillForm({ menuItems, staffs, areas }: BillFormProps) {
                       <TableRow key={item.id} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}>
                         <TableCell className="px-6 py-3 text-sm dark:text-gray-300 w-2/5">
                           {index !== fields.length - 1
-                            ? menuItems.find((menuItem) => menuItem.id === +item.menuItemId)?.item || 'Unknown Item'
+                            ? menuItems.find((menuItem) => menuItem.id === item.menuItemId)?.item || 'Unknown Item'
                             : null}
                         </TableCell>
                         <TableCell className="px-6 py-3 text-sm dark:text-gray-300 w-1/5">
@@ -253,9 +254,9 @@ function BillForm({ menuItems, staffs, areas }: BillFormProps) {
                         </TableCell>
                         <TableCell className="px-6 py-3 text-sm dark:text-gray-300 w-1/5">
                           {index !== fields.length - 1
-                            ? menuItems.find((menuItem) => menuItem.id === +item.menuItemId)
+                            ? menuItems.find((menuItem) => menuItem.id === item.menuItemId)
                               ? (
-                                  (menuItems.find((menuItem) => menuItem.id === +item.menuItemId)?.price || 0) *
+                                  (menuItems.find((menuItem) => menuItem.id === item.menuItemId)?.price || 0) *
                                   Number(item.quantitySold)
                                 ).toFixed(2)
                               : '0.00'

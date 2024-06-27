@@ -1,16 +1,16 @@
 type MenuItem = {
-  id: number;
+  id: string;
   item: string;
   price: number;
 };
 
 type Staff = {
-  id: number;
+  id: string;
   name: string;
 };
 
 type Area = {
-  id: number;
+  id: string;
   name: string;
 };
 

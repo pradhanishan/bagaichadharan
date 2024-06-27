@@ -86,7 +86,7 @@ async function main() {
       acc[category.name] = category.id;
       return acc;
     },
-    {} as Record<string, number>,
+    {} as Record<string, string>,
   );
 
   const products = [

@@ -54,10 +54,10 @@ model VerificationToken {
 
 // PRODUCT MODELS
 model Product {
-  id                Int             @id @default(autoincrement())
+  id                String          @id @default(cuid())
   name              String          @unique
   description       String?
-  productCategoryId Int
+  productCategoryId String
   productCategory   ProductCategory @relation(fields: [productCategoryId], references: [id])
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
@@ -65,7 +65,7 @@ model Product {
 }
 
 model ProductCategory {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(cuid())
   name        String    @unique
   description String?
   products    Product[] // Relation field for the one-to-many relationship
@@ -78,7 +78,7 @@ model ProductCategory {
 
 // Define the DiningArea model
 model Area {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   name      String   @unique
   areaType  String // Use the enum type for areaType
   createdAt DateTime @default(now())
@@ -100,18 +100,18 @@ model Sales {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  menuId Int // Foreign key to Product
-  menu   Menu @relation(fields: [menuId], references: [id])
+  menuId String // Foreign key to Product
+  menu   Menu   @relation(fields: [menuId], references: [id])
 
-  staffId Int // Foreign key to Staff
-  staff   Staff @relation(fields: [staffId], references: [id])
+  staffId String // Foreign key to Staff
+  staff   Staff  @relation(fields: [staffId], references: [id])
 
-  areaId Int // Foreign key to DiningArea
-  area   Area @relation(fields: [areaId], references: [id])
+  areaId String // Foreign key to DiningArea
+  area   Area   @relation(fields: [areaId], references: [id])
 }
 
 model Staff {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   name      String   @unique
   staffType String
   createdAt DateTime @default(now())
@@ -122,7 +122,7 @@ model Staff {
 }
 
 model Menu {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(cuid())
   item        String   @unique
   price       Float
   category    String
